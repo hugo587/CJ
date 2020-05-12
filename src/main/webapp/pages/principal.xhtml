@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/modeloGeral.xhtml">
+
+	<ui:define name="conteudo">
+
+		<h:panelGrid>
+			<p:dialog widgetVar="dlgExperiencia" header="Experiência"
+				closable="true" resizable="false" draggable="true" modal="true"
+				appendTo="@(body)" styleClass="topConteudo">
+				<h:form id="formExperiencia">
+					<p:dialog widgetVar="dlgNotificacao" header="Notificação"
+						onShow="true" closable="true" resizable="false" draggable="false"
+						modal="true" appendTo="@(body)" styleClass="topConteudo">
+						<p:inputTextarea value="#{cursor1.descricao}" rows="5" cols="30"
+							maxlength="300" autoResize="false" readonly="true" />
+					</p:dialog>
+				</h:form>
+			</p:dialog>
+<!-- 						rendered="#{pessoaBean.pessoa.tipo == 'T'.charAt(0) and contratacaoBean.cuidador.notificacao != null}"> -->
+<!-- 						<p:dialog widgetVar="dlgNotificacao" header="Notificação" -->
+<!-- 				onShow="true" closable="true" resizable="false" draggable="false" -->
+<!-- 				modal="true" appendTo="@(body)" styleClass="topConteudo"> -->
+<!-- 				<p:inputTextarea value="#{cursor1.descricao}" rows="5" cols="30" -->
+<!-- 					maxlength="300" autoResize="false" readonly="true" /> -->
+<!-- 			</p:dialog> -->
+		</h:panelGrid>
+
+		<div id="header-wrapper">
+			<p:graphicImage library="images" name="imagen1.jpg"
+				styleClass="imagemCentralizada" />
+
+			<div id="header" class="container">
+				<div id="logos">
+					<h1>Cuidadores Já !</h1>
+					<h2>
+						Encontre aqui <br></br>o seu anjo da guarda
+					</h2>
+
+				</div>
+
+
+
+
+			</div>
+			<div class="interface">
+
+				<h3 class="direita">Atualizado em 23/Maio/2016</h3>
+
+				<h2>O que é ?</h2>
+
+				<p>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;O <span
+						style="font-weight: bold;">Cuidadores Já</span> serve para ajudar
+					você e seus entes queridos a viver em casa com segurança, conforto
+					e alívio. Com as soluções de cuidados domiciliares <span
+						style="font-weight: bold;">Cuidadores Já</span>, você recebe
+					serviços que atendem aos mais altos padrões do mercado.
+				</p>
+
+				<h2>Como trabalhar</h2>
+
+				<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Para trabalhar, o
+					usuário deve fazer primeiramente o cadastro, preenchendo todos os
+					dados obrigatórios. No site será possível verificar se o
+					contratante deixou alguma mensagem e o Contratante também poderá
+					entrar em contato por telefone ou e-mail.</p>
+
+				<h2>Como Contratar</h2>
+
+				<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Para contratar, o cliente
+					deverá fazer o login, caso não tenha, será necessário fazer o
+					cadastro, preenchendo todos os dados obrigatórios. No site será
+					possível fazer a pesquisa por perfil que desejar e entrar em
+					contato por e-mail, telefone ou enviando uma mensagem pelo site
+					mesmo.</p>
+
+
+			</div>
+			<h:panelGroup rendered="#{autenticacaoBean.usuarioLogado == null}">
+				<div id="banner" class="container">
+					<ul class="actions">
+						<li><a href="autenticacao.jsf" class="button">Login</a></li>
+					</ul>
+				</div>
+			</h:panelGroup>
+		</div>
+		<div id="wrapper">
+			<div id="three-column" class="container">
+				<div class="title">
+					<h2>Se cadastre em nossos serviços</h2>
+					<span class="byline">Seja um cuidador você também</span>
+				</div>
+			</div>
+		</div>
+		<div id="welcome">
+			<div class="container">
+				<div class="title">
+					<h2>Você prescisa de uma pessoa para te ajudar?</h2>
+					<span class="byline">Agora com o CJ tudo ficou fácil </span>
+				</div>
+
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

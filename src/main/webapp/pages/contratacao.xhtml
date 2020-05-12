@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<ui:composition template="/templates/modeloGeral.xhtml">
+	<ui:define name="conteudo">
+		<h:form id="formListagem">
+			<p:panel id="panel" header="Contratação" styleClass="topConteudo">
+				<p:dataTable id="tabela" rows="5" paginator="true"
+					emptyMessage="Nenhum Registro Encontrado"
+					value="#{contratacaoBean.cuidadoresTela}" var="cursor">
+
+					<p:column headerText="Foto">
+						<p:graphicImage library="images"
+							name="#{cursor.pessoa.codigo}.png" style="height: 200px" />
+					</p:column>
+
+					<p:column headerText="Nome" filterBy="#{cursor.pessoa.nome}"
+						sortBy="#{cursor.pessoa.nome}" filterMatchMode="contains">
+						<h:outputText value="#{cursor.pessoa.nome}" />
+					</p:column>
+
+					<p:column headerText="Cidade"
+						filterBy="#{cursor.pessoa.cidade.nome}"
+						sortBy="#{cursor.pessoa.cidade.nome}" filterMatchMode="contains">
+						<h:outputText value="#{cursor.pessoa.cidade.nome}" />
+					</p:column>
+
+					<p:column headerText="Endereço"
+						filterBy="#{cursor.pessoa.endereco}"
+						sortBy="#{cursor.pessoa.endereco}" filterMatchMode="contains">
+						<h:outputText value="#{cursor.pessoa.endereco}" />
+					</p:column>
+
+					<p:column headerText="Valor Dia"
+						filterBy="#{cursor.valorDiaContratacao}"
+						sortBy="#{cursor.valorDiaContratacao}" filterMatchMode="contains">
+						<h:outputText value="#{cursor.valorDiaContratacao}">
+							<f:convertNumber locale="pt_BR" minFractionDigits="2" />
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Disponibilidade"
+						filterBy="#{cursor.disponibilidade}"
+						sortBy="#{cursor.disponibilidade}" filterMatchMode="contains">
+						<h:outputText value="#{cursor.disponibilidade}" />
+					</p:column>
+
+					<p:column headerText="Opções">
+						<p:commandButton icon="ui-icon-info"
+							title="Exibir experiência do Cuidador"
+							actionListener="#{contratacaoBean.buscaCuidador}"
+							update=":mensagem :formExperiencia:tabela2"
+							oncomplete="PF('dlgExperiencia').show();">
+							<f:attribute name="selecionaCuidador" value="#{cursor}"></f:attribute>
+						</p:commandButton>
+						<p:commandButton icon="ui-icon-comment"
+							title="Enviar uma Notificação"
+							actionListener="#{contratacaoBean.buscaCuidador}"
+							oncomplete="PF('dlgNotificacao').show();"
+							update=":mensagem :formNotificacao:painelNotificacao">
+							<f:attribute name="selecionaCuidador" value="#{cursor}"></f:attribute>
+						</p:commandButton>
+						<p:commandButton icon="ui-icon-circle-plus" title="Contratar"
+							actionListener="#{contratacaoBean.buscaCuidador}"
+							onclick="PF('dlgContratacao').show();"
+							update=":mensagem :formContratacao:painelContratacao">
+							<f:attribute name="selecionaCuidador" value="#{cursor}"></f:attribute>
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+
+		<p:separator />
+
+		<p:dialog widgetVar="dlgExperiencia" header="Experiência"
+			closable="true" resizable="false" draggable="true" modal="true"
+			appendTo="@(body)" styleClass="topConteudo">
+			<h:form id="formExperiencia">
+				<p:panel styleClass="topConteudo">
+					<p:dataTable id="tabela2" rows="5" paginator="true"
+						emptyMessage="Nenhum Registro Encontrado"
+						value="#{contratacaoBean.listaExperiencia}" var="cursor1">
+
+						<p:column headerText="Nome Paciente">
+							<h:outputText value="#{cursor1.nomePaciente}" />
+						</p:column>
+
+
+						<p:column headerText="Telefone Paciente">
+							<h:outputText value="#{cursor1.telefonePaciente}" maxlength="12"
+								size="14" />
+						</p:column>
+
+						<p:column headerText="Período Inicial">
+							<h:outputText value="#{cursor1.periodoInicial}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+
+						<p:column headerText="Período Final">
+							<h:outputText value="#{cursor1.periodoFinal}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+
+						<p:column headerText="Experiência">
+							<p:inputTextarea value="#{cursor1.descricao}" rows="5" cols="27"
+								maxlength="300" autoResize="false" readonly="true" />
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgNotificacao" header="Notificar Cuidador"
+			closable="true" resizable="false" draggable="false" modal="true"
+			appendTo="@(body)" styleClass="topConteudo">
+			<h:form id="formNotificacao">
+				<h:panelGrid id="painelNotificacao" columns="1">
+
+					<h:outputText id="display" style="font-size: 10px" />
+					<p:inputTextarea value="#{contratacaoBean.notificacaoAux}" rows="5"
+						cols="30" counter="display" maxlength="300"
+						counterTemplate="{0} Caracteres" autoResize="false" />
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Enviar"
+						actionListener="#{contratacaoBean.notificaPessoa}"
+						update=":mensagem :formListagem:panel"
+						onclick="PF('dlgNotificacao').hide();" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgNotificacao').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgContratacao" header="Finaliza Contratação"
+			closable="false" resizable="false" draggable="false" modal="true"
+			appendTo="@(body)" styleClass="topConteudo">
+			<h:form id="formContratacao">
+				<h:panelGrid id="painelContratacao" columns="2">
+					<p:outputLabel value="Nome Cuidador:" />
+					<p:outputLabel value="#{contratacaoBean.cuidador.pessoa.nome}" />
+
+					<p:outputLabel for="inicio" value="Data Início:" />
+					<p:calendar id="inicio" pattern="dd/MM/yyyy" mask="true"
+						locale="pt_BR"
+						value="#{contratacaoBean.contratacao.dataInicioContratacao}"
+						required="true"
+						requiredMessage="O Campo Data Inicio é Obrigatório"
+						converterMessage="Data Inicio fora do Padrão. Favor verificar" />
+
+					<p:outputLabel for="fim" value="Data Fim:" />
+					<p:calendar id="fim" pattern="dd/MM/yyyy" mask="true"
+						locale="pt_BR"
+						value="#{contratacaoBean.contratacao.dataFimContratacao}"
+						required="true" requiredMessage="O campo Data Fim é Obrigatório"
+						converterMessage="Data Fim fora do Padrão. Favor verificar" />
+					<p:commandButton value="Calcular"
+						actionListener="#{contratacaoBean.contrataCuidador}"
+						update=":mensagem :formContratacao:panel3 :formContratacao:painelContratacao" />
+					<p:commandButton value="Cancelar"
+						actionListener="#{contratacaoBean.novo}"
+						onclick="PF('dlgContratacao').hide();" />
+				</h:panelGrid>
+
+				<h:panelGrid id="panel3" columns="2">
+					<p:outputLabel value="Valor total: R$ " />
+					<p:outputLabel id="total"
+						value="#{contratacaoBean.contratacao.valorFinal}">
+						<f:convertNumber locale="pt_BR" minFractionDigits="2" />
+					</p:outputLabel>
+					<p:commandButton value="Finalizar"
+						actionListener="#{contratacaoBean.finalizaContratacao}"
+						oncomplete="verificar2(xhr, status, args,'dlgContratacao')"
+						update=":mensagem :formListagem:panel :formContratacao">
+						<f:attribute name="selecionaContratante"
+							value="#{autenticacaoBean.usuarioLogado.pessoa.codigo}"></f:attribute>
+					</p:commandButton>
+				</h:panelGrid>
+
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>
+</html>

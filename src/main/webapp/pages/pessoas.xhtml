@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<ui:composition template="/templates/modeloGeral.xhtml">
+	<ui:define name="conteudo">
+
+		<p:panel header="Cadastro - Pessoa" style="text-align:center"
+			styleClass="topConteudo" />
+		<div align="center">
+			<h:form id="formCadastro">
+				<h:panelGrid id="panel" columns="2">
+					<p:outputLabel for="nome" value="Nome:" />
+					<p:inputText id="nome" value="#{pessoaBean.pessoa.nome}"
+						maxlength="50" size="30" required="true"
+						requiredMessage="O campo Nome é Obrigatório" />
+
+					<p:outputLabel for="cpf" value="CPF:" />
+					<p:inputMask id="cpf" mask="999.999.999-99"
+						value="#{pessoaBean.pessoa.cpf}" maxlength="14" size="14"
+						required="true" requiredMessage="O campo CPF é obrigatório" />
+
+					<p:outputLabel for="cep" value="CEP:" />
+					<p:inputMask id="cep" mask="99999-999"
+						value="#{pessoaBean.pessoa.cep}" maxlength="9" size="11"
+						required="true" requiredMessage="O campo CEP é Obrigatório" />
+
+					<p:outputLabel for="endereco" value="Endereço:" />
+					<p:inputText id="endereco" value="#{pessoaBean.pessoa.endereco}"
+						maxlength="50" size="30" required="true"
+						requiredMessage="O campo Endereço é Obrigatório" />
+
+					<p:outputLabel value="Complemento:" />
+					<p:inputText id="complemento"
+						value="#{pessoaBean.pessoa.complemento}" maxlength="20" size="15" />
+
+					<p:outputLabel for="telefone" value="Telefone:" />
+					<p:inputMask id="telefone" mask="(99)9999-9999"
+						value="#{pessoaBean.pessoa.telefone}" maxlength="12" size="14"
+						required="true" requiredMessage="O campo Telefone é Obrigatório" />
+
+					<p:outputLabel for="celular" value="Celular:" />
+					<p:inputMask id="celular" mask="(99)9999-9999"
+						value="#{pessoaBean.pessoa.celular}" maxlength="12" size="14"
+						required="true" requiredMessage="O campo Celular é Obrigatório" />
+
+					<p:outputLabel for="email" value="E-mail:" />
+					<p:inputText id="email" value="#{pessoaBean.pessoa.email}"
+						maxlength="30" size="20" required="true"
+						requiredMessage="O campo Email é Obrigatório"
+						converterMessage="Email invalido"
+						validatorMessage="Email invalido">
+						<f:validateRegex pattern="[a-zA-Z0-9\-\_\.]+@[a-zA-Z0-9\-\_\.]+" />
+					</p:inputText>
+
+					<p:outputLabel for="estado" value="Estado:" />
+					<p:selectOneMenu id="estado" filter="true" required="true"
+						requiredMessage="O campo 'Estado' é Obrigatório"
+						converter="omnifaces.SelectItemsConverter"
+						value="#{pessoaBean.estado}">
+						<f:selectItem noSelectionOption="true"
+							itemLabel="Selecione um Estado" />
+						<f:selectItems value="#{pessoaBean.estados}" var="cursor"
+							itemLabel="#{cursor.nome}" itemValue="#{cursor}"></f:selectItems>
+						<p:ajax listener="#{pessoaBean.popular}"
+							update=":mensagem :formCadastro:cidade" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="cidade" value="Cidade:" />
+					<p:selectOneMenu id="cidade" value="#{pessoaBean.pessoa.cidade}"
+						filter="true" required="true"
+						requiredMessage="O campo Cidade é Obrigatório"
+						converter="omnifaces.SelectItemsConverter">
+						<f:selectItem itemLabel="Selecione uma Cidade"
+							noSelectionOption="true" />
+						<f:selectItems value="#{pessoaBean.cidades}" var="cursor"
+							itemValue="#{cursor}" itemLabel="#{cursor.nome}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="data" value="Data Nascimento:" />
+					<p:calendar id="data" value="#{pessoaBean.pessoa.dataNacimento}"
+						pattern="dd/MM/yyyy" mask="true" required="true" locale="pt_BR"
+						requiredMessage="O Campo data é Obrigatório" />
+
+					<p:outputLabel value="Tipo:" />
+					<p:selectOneMenu value="#{pessoaBean.pessoa.tipo}" filter="true"
+						required="true" requiredMessage="O campo Tipo é Obrigatório">
+						<f:selectItem itemLabel="Selecione um Tipo"
+							noSelectionOption="true" />
+						<f:selectItem itemLabel="Cuidador" itemValue="T" />
+						<f:selectItem itemLabel="Contratante" itemValue="C" />
+						<p:ajax update=":mensagem :formCadastro:salvar" />
+					</p:selectOneMenu>
+				</h:panelGrid>
+				<h:panelGrid id="salvar" columns="2">
+
+					<p:commandButton value="Salvar"
+						actionListener="#{pessoaBean.carrega}" process="@form"
+						rendered="#{pessoaBean.pessoa.tipo == 'T'.charAt(0)}"
+						oncomplete="verificar(xhr, status, args,'dlgCadastroCuid')"
+						update=":mensagem :formCadastroCuidador:panelCuidador" />
+					<p:commandButton value="Limpar"
+						rendered="#{pessoaBean.pessoa.tipo == 'T'.charAt(0)}"
+						actionListener="#{pessoaBean.novo}"
+						update=":mensagem :formCadastro:panel" process="@this" />
+
+					<p:commandButton value="Salvar" process="@form"
+						rendered="#{pessoaBean.pessoa.tipo == 'C'.charAt(0)}"
+						oncomplete="verificar(xhr, status, args,'dlgCadastroCont')"
+						update=":mensagem" />
+					<p:commandButton value="Limpar"
+						rendered="#{pessoaBean.pessoa.tipo == 'C'.charAt(0)}"
+						actionListener="#{pessoaBean.novo}"
+						update=":mensagem :formCadastro:panel" process="@this" />
+
+				</h:panelGrid>
+			</h:form>
+		</div>
+
+		<p:dialog widgetVar="dlgCadastroCont" header="Cadastro-Contratante"
+			closable="false" resizable="false" draggable="false" modal="true"
+			appendTo="@(body)" styleClass="topConteudo" style="font-size: 90%">
+			<h:form id="formCadastroContratante" enctype="multipart/form-data">
+				<h:panelGrid id="panelContratante" columns="2">
+
+					<h:outputLabel for="pwd1" value="Senha: *" />
+					<p:password id="pwd1"
+						value="#{pessoaBean.usuario.senhaSemCriptografia}" match="pwd2"
+						label="Password 1" required="true"
+						validatorMessage="A Senha não é igual. Favor digitar a senha igual nos dois campos"
+						converterMessage="A Senha não é igual. Favor digitar a senha igual nos dois campos"
+						requiredMessage="O Campo Senha é Obrigatório" />
+
+					<h:outputLabel for="pwd2" value="Confirma Senha: *" />
+					<p:password id="pwd2"
+						value="#{pessoaBean.usuario.senhaSemCriptografia}"
+						label="Password 2" required="true"
+						validatorMessage="A Senha não é igual. Favor digitar a senha igual nos dois campos"
+						onverterMessage="A Senha não é igual. Favor digitar a senha igual nos dois campos"
+						requiredMessage="O Campo Senha é Obrigatório" />
+
+					<p:outputLabel for="nomePaciente" value="Nome Paciente:" />
+					<p:inputText id="nomePaciente"
+						value="#{pessoaBean.contratante.nomePaciente}" maxlength="50"
+						size="30" required="true"
+						requiredMessage="O Campo Nome Paciente é Obrigatório" />
+
+					<p:outputLabel for="tel" value="Telefone Paciente:" />
+					<p:inputMask id="tel"
+						value="#{pessoaBean.contratante.telefonePaciente}"
+						mask="(99)9999-9999" maxlength="12" size="14" required="true"
+						requiredMessage="O Campo Telefone é Obrigatório" />
+
+					<p:outputLabel for="foto" value="Foto:" />
+					<p:fileUpload id="foto" mode="advanced"
+						fileUploadListener="#{pessoaBean.upload}"></p:fileUpload>
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Salvar"
+						actionListener="#{pessoaBean.salvaContratante}"
+						update=":mensagem :formCadastroContratante:panelContratante :formCadastro:panel"
+						oncomplete="verificarCampos(xhr, status, args,'dlgCadastroCont')" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgCadastroCont').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgCadastroCuid" header="Cadastro-Cuidador" 
+			closable="false" resizable="false" draggable="true" modal="true"
+			appendTo="@(body)" styleClass="topConteudo" style="font-size: 67%" >
+			<h:form id="formCadastroCuidador" enctype="multipart/form-data">
+				<h:panelGrid id="panelCuidador" columns="2">
+					<p:outputLabel value="Nome:" />
+					<p:outputLabel value="#{pessoaBean.cuidador.pessoa.nome}" />
+
+					<h:outputLabel for="pwd11" value="Senha: *" />
+					<p:password id="pwd11"
+						value="#{pessoaBean.usuario.senhaSemCriptografia}" match="pwd22"
+						label="Password 11" required="true"
+						validatorMessage="A Senha não é igual. Favor digitar a senha igual nos dois campos"
+						converterMessage="A Senha não é igual. Favor digitar a senha igual nos dois campos"
+						requiredMessage="O Campo Senha é Obrigatório" />
+
+					<h:outputLabel for="pwd22" value="Confirma Senha: *" />
+					<p:password id="pwd22"
+						value="#{pessoaBean.usuario.senhaSemCriptografia}"
+						label="Password 22" required="true"
+						validatorMessage="A Senha não é igual. Favor digitar a senha igual nos dois campos"
+						onverterMessage="A Senha não é igual. Favor digitar a senha igual nos dois campos"
+						requiredMessage="O Campo Senha é Obrigatório" />
+
+
+					<p:outputLabel for="liberado" value="Liberado para Trabalhar?" />
+					<p:selectOneRadio id="liberado"
+						value="#{pessoaBean.cuidador.liberado}" required="true"
+						requiredMessage="O campo Liberado é Obrigatório">
+						<f:selectItem itemLabel="Sim" itemValue="true" />
+						<f:selectItem itemLabel="Não" itemValue="false" />
+					</p:selectOneRadio>
+
+					<p:outputLabel for="disponibilidade" value="Disponibilidade:" />
+					<p:selectManyCheckbox id="disponibilidade"
+						value="#{pessoaBean.periodosSelecionados}" layout="grid"
+						columns="3" required="true"
+						requiredMessage="O campo Disponibilidade é Obrigatório">
+						<f:selectItems value="#{pessoaBean.periodos}" />
+						<p:ajax listener="#{pessoaBean.listaDisponibilidade}" />
+					</p:selectManyCheckbox>
+
+					<p:outputLabel for="valor" value="Valor Contração ao Dia: R$ " />
+					<p:inputText id="valor"
+						value="#{pessoaBean.cuidador.valorDiaContratacao}" required="true"
+						requiredMessage="O Valor Contratação é Obrigatório" maxlength="6"
+						size="12" onkeypress="moeda(this);">
+						<f:convertNumber locale="pt_BR" minFractionDigits="2" />
+						<f:validateDoubleRange minimum="1" maximum="999999" />
+					</p:inputText>
+
+					<p:outputLabel for="foto" value="Foto:" />
+					<p:fileUpload id="foto" mode="advanced" style="font-size: 80%"
+						fileUploadListener="#{pessoaBean.upload}"></p:fileUpload>
+
+				</h:panelGrid>
+
+				<p:separator />
+
+
+				<p style="font-size: 20px; text-align: center">Experiência</p>
+
+				<h:panelGrid id="painelExperiencia" columns="2">
+					<p:outputLabel value="Nome Paciente:" />
+					<p:inputText value="#{pessoaBean.cuidador.nomePaciente}" />
+
+
+					<p:outputLabel value="Telefone Paciente:" />
+					<p:inputMask mask="(99)9999-9999"
+						value="#{pessoaBean.cuidador.telefonePaciente}" maxlength="12"
+						size="14" />
+
+					<p:outputLabel value="Período Inicial:" />
+					<p:calendar pattern="dd/MM/yyyy" mask="true" locale="pt_BR"
+						value="#{pessoaBean.cuidador.periodoInicial}" />
+
+					<p:outputLabel value="Período Final:" />
+					<p:calendar pattern="dd/MM/yyyy" mask="true" locale="pt_BR"
+						value="#{pessoaBean.cuidador.periodoFinal}" />
+
+					<!-- 										<p:outputLabel value="Trabalha aqui:" /> -->
+					<!-- 										<p:selectOneRadio value="#{pessoaBean.cuidador.trabalhoAqui}"> -->
+					<!-- 											<f:selectItem itemLabel="Sim" itemValue="true" /> -->
+					<!-- 											<f:selectItem itemLabel="Não" itemValue="false" /> -->
+					<!-- 										</p:selectOneRadio> -->
+
+					<!-- 					<h:outputText /> -->
+					<h:outputText id="display" style="font-size: 10px" />
+
+					<p:outputLabel value="Experiência:" />
+					<p:inputTextarea value="#{pessoaBean.cuidador.descricao}" rows="5"
+						cols="30" counter="display" maxlength="300"
+						counterTemplate="{0} Caracteres" autoResize="false" />
+				</h:panelGrid>
+
+				<p:commandButton value="Adicionar" style="font-size: 10px"
+					title="Clique para Add uma nova Experiência"
+					actionListener="#{pessoaBean.armazenaPaciente}"
+					update=":mensagem :formCadastroCuidador:painelExperiencia :formCadastroCuidador:adicionado" />
+				<p:outputLabel id="adicionado"
+					value="#{pessoaBean.contador} Adicionado(s)" />
+
+				<p:separator />
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Salvar"
+						update=":mensagem :formCadastroCuidador:panelCuidador :formCadastro:panel"
+						actionListener="#{pessoaBean.salvaCuidador}"
+						oncomplete="verificarCampos(xhr, status, args,'dlgCadastroCuid')" />
+					<p:commandButton value="Cancelar"
+						onclick="PF('dlgCadastroCuid').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>
+</html>
